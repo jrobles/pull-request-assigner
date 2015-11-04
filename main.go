@@ -31,8 +31,9 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 	} else {
 		if p.Action == "opened" {
 
-			yourMessage := robification.NewFdChat(string(config.Fd_Token), string(p.Pull_Request.Html_Url))
-			err = robification.Send(yourMessage)
+			message := fmt.Sprint(p.Pull_Request.Html_Url, " To: ", p.Pull_Request.Head.Repo.Name, " by: ", p.Pull_Request.User.Login)
+			post := robification.NewFdChat(string(config.Fd_Token), string(message))
+			err = robification.Send(post)
 			if err != nil {
 				println(err)
 			}

@@ -5,10 +5,15 @@ type gitPayload struct {
 	Number       int    `json:number`
 	Pull_Request struct {
 		Html_Url string `json:html_url`
+		Head     struct {
+			Repo struct {
+				Name string `json:name`
+			} `json:repo`
+		} `json:head`
+		User struct {
+			Login string `json:login`
+		} `json:user`
 	} `json:pull_request`
-	Repo struct {
-		Name string `json:name`
-	} `json:repo`
 }
 
 type JSONConfigData struct {
