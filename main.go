@@ -6,6 +6,7 @@ import (
 	"github.com/josemrobles/robification-go"
 	"io/ioutil"
 	"net/http"
+	"math/rand"
 )
 
 func main() {
@@ -30,8 +31,9 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 		println(err)
 	} else {
 		if p.Action == "opened" {
-
-			message := fmt.Sprint(p.Pull_Request.Html_Url, " To: ", p.Pull_Request.Head.Repo.Name, " by: ", p.Pull_Request.User.Login)
+			prOwner := p.Pull_Request.User.Login
+			rev1, rev2 := selectReviewers(prOwner, *config)
+			message := fmt.Sprint(p.Pull_Request.Html_Url, " To: ", p.Pull_Request.Head.Repo.Name, " by: ", p.Pull_Request.User.Login," review: ", "@",rev1," @",rev2)
 			post := robification.NewFdChat(string(config.Fd_Token), string(message))
 			err = robification.Send(post)
 			if err != nil {
@@ -52,5 +54,39 @@ func getConfig(jsonFile string) (config *JSONConfigData) {
 		panic(err)
 	}
 	json.Unmarshal([]byte(J), &config)
-	return config
+	return
+}
+
+func selectReviewers(prOwner string, config JSONConfigData) (rev1, rev2 string) {
+	counter:= 12 //positions availables in the array of users
+	i := 0
+
+	//The positions are going to change in the array to be sure each selected user is different
+	//to the other and both of them are different from the PullRequest creator  
+	for i < 13 {
+		if owner := fmt.Sprint(config.Users_Git_Flow[i].GithubName); owner == prOwner {
+			break
+		}
+		i+=1
+	}
+
+	if i < 13 {
+		swap(config.Users_Git_Flow,i,counter)
+		counter --
+	}	
+		random1 := rand.Intn(counter)
+		rev1 = fmt.Sprint(config.Users_Git_Flow[random1].FlowdockName)
+		swap(config.Users_Git_Flow,random1,counter)
+		counter --
+
+		random2 := rand.Intn(counter)
+		rev2 = fmt.Sprint(config.Users_Git_Flow[random2].FlowdockName)
+
+	return
+}
+
+func swap(arrElems []UsersGitFlow, pos1, pos2 int) {
+	temp := arrElems[pos1]
+	arrElems[pos1] = arrElems[pos2]
+	arrElems[pos2] = temp
 }
