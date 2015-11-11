@@ -54,12 +54,11 @@ func TestSelectReviewers(t *testing.T) {
 		u11,
 		u12,
 	}
-	config := JSONConfigData{
-		Fd_Token:       "",
+	users := UsersData{
 		Users_Git_Flow: temp,
 	}
 	prOwner := "User0"
-	rev1, rev2 := selectReviewers(prOwner, config)
+	rev1, rev2 := selectReviewers(prOwner, users)
 	if rev1 == "" {
 		t.Fatal("rev1 can not be empty")
 	}
@@ -71,5 +70,20 @@ func TestSelectReviewers(t *testing.T) {
 	}
 	if rev1 == prOwner || rev2 == prOwner{
 			t.Fatal("revs can not be equal to the prOwner")	
+	}
+}
+
+func TestGetUsers(t *testing.T){
+	user1 := &UsersGitFlow{}
+	user1.FlowdockName = "User1Flowdock"
+	user1.GithubName = "User1Github"
+    
+	users:= getUsers("users.json")
+	
+	u :=append(users.Users_Git_Flow, *user1)
+    count_elements := len(u)
+	last_user := u[count_elements-1]
+	if (last_user.GithubName != "User1Github") { 
+		t.Fatal("Reading users from json has failed")
 	}
 }
