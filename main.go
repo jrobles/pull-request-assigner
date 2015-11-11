@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/josemrobles/robification-go"
 	"io/ioutil"
-	"net/http"
 	"math/rand"
+	"net/http"
 )
 
 func main() {
@@ -21,8 +21,7 @@ func main() {
 
 func indexAction(res http.ResponseWriter, req *http.Request) {
 	config := getConfig("config.json")
-	users:= getUsers("users.json")
-
+	users := getUsers("users.json")
 
 	decoder := json.NewDecoder(req.Body)
 	var p gitPayload
@@ -34,7 +33,7 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 		if p.Action == "opened" {
 			prOwner := p.Pull_Request.User.Login
 			rev1, rev2 := selectReviewers(prOwner, *users)
-			message := fmt.Sprint(p.Pull_Request.Html_Url, " To: ", p.Pull_Request.Head.Repo.Name, " by: ", p.Pull_Request.User.Login," review: ", "@",rev1," @",rev2)
+			message := fmt.Sprint(p.Pull_Request.Html_Url, " To: ", p.Pull_Request.Head.Repo.Name, " by: ", p.Pull_Request.User.Login, " review: ", "@", rev1, " @", rev2)
 			post := robification.NewFdChat(string(config.Fd_Token), string(message))
 			err = robification.Send(post)
 			if err != nil {
@@ -82,16 +81,16 @@ func selectReviewers(prOwner string, users UsersData) (rev1, rev2 string) {
 	}
 
 	if i < count_elements {
-		swap(users.Users_Git_Flow,i,counter)
-		counter --
-	}	
-		random1 := rand.Intn(counter)
-		rev1 = fmt.Sprint(users.Users_Git_Flow[random1].FlowdockName)
-		swap(users.Users_Git_Flow,random1,counter)
-		counter --
+		swap(users.Users_Git_Flow, i, counter)
+		counter--
+	}
+	random1 := rand.Intn(counter)
+	rev1 = fmt.Sprint(users.Users_Git_Flow[random1].FlowdockName)
+	swap(users.Users_Git_Flow, random1, counter)
+	counter--
 
-		random2 := rand.Intn(counter)
-		rev2 = fmt.Sprint(users.Users_Git_Flow[random2].FlowdockName)
+	random2 := rand.Intn(counter)
+	rev2 = fmt.Sprint(users.Users_Git_Flow[random2].FlowdockName)
 
 	return
 }

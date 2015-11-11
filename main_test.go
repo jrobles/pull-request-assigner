@@ -38,7 +38,6 @@ func TestSelectReviewers(t *testing.T) {
 	u11 := UsersGitFlow{GithubName: "User11", FlowdockName: "user test11"}
 	u12 := UsersGitFlow{GithubName: "User12", FlowdockName: "user test12"}
 
-
 	temp := []UsersGitFlow{
 		u0,
 		u1,
@@ -66,24 +65,24 @@ func TestSelectReviewers(t *testing.T) {
 		t.Fatal("rev2 can not be empty")
 	}
 	if rev1 == rev2 {
-				t.Fatal("rev2 and rev1 can not be the same")
+		t.Fatal("rev2 and rev1 can not be the same")
 	}
-	if rev1 == prOwner || rev2 == prOwner{
-			t.Fatal("revs can not be equal to the prOwner")	
+	if rev1 == prOwner || rev2 == prOwner {
+		t.Fatal("revs can not be equal to the prOwner")
 	}
 }
 
-func TestGetUsers(t *testing.T){
+func TestGetUsers(t *testing.T) {
 	user1 := &UsersGitFlow{}
 	user1.FlowdockName = "User1Flowdock"
 	user1.GithubName = "User1Github"
-    
-	users:= getUsers("users.json")
-	
-	u :=append(users.Users_Git_Flow, *user1)
-    count_elements := len(u)
+
+	users := getUsers("users.json")
+
+	u := append(users.Users_Git_Flow, *user1)
+	count_elements := len(u)
 	last_user := u[count_elements-1]
-	if (last_user.GithubName != "User1Github") { 
+	if last_user.GithubName != "User1Github" {
 		t.Fatal("Reading users from json has failed")
 	}
 }
