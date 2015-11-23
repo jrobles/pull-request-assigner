@@ -21,7 +21,6 @@ func main() {
 
 func indexAction(res http.ResponseWriter, req *http.Request) {
 	config := getConfig("config.json")
-	users := getUsers("users.json")
 
 	decoder := json.NewDecoder(req.Body)
 	var p gitPayload
@@ -32,7 +31,7 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 	} else {
 		if p.Action == "opened" {
 			prOwner := p.Pull_Request.User.Login
-			rev1, rev2 := selectReviewers(prOwner, *users)
+			rev1, rev2 := selectReviewers(prOwner, *config)
 			message := fmt.Sprint(p.Pull_Request.Html_Url, " To: ", p.Pull_Request.Head.Repo.Name, " by: ", p.Pull_Request.User.Login, " review: ", "@", rev1, " @", rev2)
 			post := robification.NewFdChat(string(config.Fd_Token), string(message))
 			err = robification.Send(post)
@@ -56,17 +55,7 @@ func getConfig(jsonFile string) (config *JSONConfigData) {
 	return
 }
 
-func getUsers(jsonFile string) (users *UsersData) {
-	users = &UsersData{}
-	J, err := ioutil.ReadFile(jsonFile)
-	if err != nil {
-		panic(err)
-	}
-	json.Unmarshal([]byte(J), &users)
-	return
-}
-
-func selectReviewers(prOwner string, users UsersData) (rev1, rev2 string) {
+func selectReviewers(prOwner string, users JSONConfigData) (rev1, rev2 string) {
 	count_elements := len(users.Users_Git_Flow)
 	counter := count_elements - 1 //positions availables in the array of users
 	i := 0
