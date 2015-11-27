@@ -1,4 +1,4 @@
-# git-webhook-robification [![Build Status](https://travis-ci.org/josemrobles/git-webhook-robification.svg?branch=master)](https://travis-ci.org/josemrobles/git-webhook-robification)
+# git-webhook-api [![Build Status](https://travis-ci.org/josemrobles/git-webhook-robification.svg?branch=master)](https://travis-ci.org/josemrobles/git-webhook-robification)
 Creates an API which accepts a git webhook post for new PR's. Once received, two dev team members are selected as reviewers then a notification is sent using my [robification-go](https://github.com/josemrobles/robification-go) library.
 
 ***Example:***
