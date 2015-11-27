@@ -61,7 +61,7 @@ func selectReviewers(prOwner string, users JSONConfigData) (rev1, rev2 string) {
 	i := 0
 
 	//The positions are going to change in the array to be sure each selected user is different
-	//to the other and both of them are different from the PullRequest creator  
+	//to the other and both of them are different from the PullRequest creator
 	for i < count_elements {
 		if owner := fmt.Sprint(users.Users_Git_Flow[i].GithubName); owner == prOwner {
 			break

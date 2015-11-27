@@ -53,7 +53,7 @@ func TestSelectReviewers(t *testing.T) {
 		u11,
 		u12,
 	}
-	users := UsersData{
+	users := JSONConfigData{
 		Users_Git_Flow: temp,
 	}
 	prOwner := "User0"
