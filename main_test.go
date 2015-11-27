@@ -1,6 +1,24 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+)
+
+var (
+	server  *httptest.Server
+	reader  io.Reader //Ignore this for now
+	testUrl string
+)
+
+func init() {
+	server = httptest.NewServer(http.HandlerFunc(indexAction)) //Creating new server with the user handlers
+	testUrl = fmt.Sprintf("%s/", server.URL)                   //Grab the address for the API endpoint
+}
 
 func TestSwap(t *testing.T) {
 	u0 := UsersGitFlow{GithubName: "Eric0", FlowdockName: "eric test0"}
@@ -69,5 +87,23 @@ func TestSelectReviewers(t *testing.T) {
 	}
 	if rev1 == prOwner || rev2 == prOwner {
 		t.Fatal("revs can not be equal to the prOwner")
+	}
+}
+
+func TestIndexAction(t *testing.T) {
+	testJson := `{"action": "open","number": 280,"pull_request": {"html_url": "https://github.com/orgname/repo/pull/280","user": {"login": "josemrobles"}}}`
+
+	reader := strings.NewReader(testJson) //Convert string to reader
+
+	request, err := http.NewRequest("POST", testUrl, reader) //Create request with JSON body
+
+	res, err := http.DefaultClient.Do(request)
+
+	if err != nil {
+		t.Fatal(err) //Something is wrong while sending request
+	}
+
+	if res.StatusCode != 201 {
+		t.Fatal("Expected:", res.StatusCode) //Uh-oh this means our test failed
 	}
 }

@@ -27,7 +27,10 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 	err := decoder.Decode(&p)
 
 	if err != nil {
-		fmt.Println(err)
+		res.WriteHeader(400)
+		res.Header().Set("Content-Type", "application/json")
+		b, _ := json.Marshal(p)
+		fmt.Fprintf(res, string(b))
 	} else {
 		if p.Action == "opened" {
 			prOwner := p.Pull_Request.User.Login
@@ -36,11 +39,13 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 			post := robification.NewFdChat(string(config.Fd_Token), string(message))
 			err = robification.Send(post)
 			if err != nil {
-				fmt.Println(err)
+				res.WriteHeader(500)
+				fmt.Fprintf(res, "ERROR: Could not send robification")
 			}
-			res.Header().Set("Content-Type", "application/json")
-			b, _ := json.Marshal(p)
-			fmt.Fprintf(res, string(b))
+			res.WriteHeader(201)
+			//res.Header().Set("Content-Type", "application/json")
+			//b, _ := json.Marshal(p)
+			fmt.Fprintf(res, "Robification sent")
 		}
 	}
 }
