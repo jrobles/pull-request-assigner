@@ -91,11 +91,12 @@ func TestSelectReviewers(t *testing.T) {
 }
 
 func TestIndexAction(t *testing.T) {
-	testJson := `{"action": "open","number": 280,"pull_request": {"html_url": "https://github.com/orgname/repo/pull/280","user": {"login": "josemrobles"}}}`
+	testJson := `{"action": "opened","number": 280,"pull_request": {"html_url": "https://github.com/orgname/repo/pull/280","user": {"login": "josemrobles"}}}`
 
 	reader := strings.NewReader(testJson) //Convert string to reader
 
 	request, err := http.NewRequest("POST", testUrl, reader) //Create request with JSON body
+	request.Header.Set("Token", "37f7f7446d64345dd367744428837fe5")
 
 	res, err := http.DefaultClient.Do(request)
 
@@ -104,6 +105,6 @@ func TestIndexAction(t *testing.T) {
 	}
 
 	if res.StatusCode != 201 {
-		t.Fatal("Expected:", res.StatusCode) //Uh-oh this means our test failed
+		t.Fatal("Expected 201 status code, received: ", res.StatusCode) //Uh-oh this means our test failed
 	}
 }

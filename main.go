@@ -43,11 +43,10 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 				fmt.Fprintf(res, "ERROR: Could not send robification")
 			}
 			res.WriteHeader(201)
-			//res.Header().Set("Content-Type", "application/json")
-			//b, _ := json.Marshal(p)
 			fmt.Fprintf(res, "Robification sent")
 		}
 	}
+
 }
 
 func getConfig(jsonFile string) (config *JSONConfigData) {
