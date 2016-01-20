@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -61,7 +62,7 @@ func getConfig(jsonFile string) (config *JSONConfigData) {
 
 func selectReviewers(prOwner string, users JSONConfigData) (rev1, rev2 string) {
 	count_elements := len(users.Users_Git_Flow)
-	counter := count_elements - 1 //positions availables in the array of users
+	counter := count_elements - 1 //available positions in the array of users
 	i := 0
 
 	//The positions are going to change in the array to be sure each selected user is different
@@ -77,12 +78,16 @@ func selectReviewers(prOwner string, users JSONConfigData) (rev1, rev2 string) {
 		swap(users.Users_Git_Flow, i, counter)
 		counter--
 	}
-	random1 := rand.Intn(counter)
+	seed1 := rand.NewSource(time.Now().UnixNano())
+	rand1 := rand.New(seed1)
+	random1 := rand1.Intn(counter)
 	rev1 = fmt.Sprint(users.Users_Git_Flow[random1].FlowdockName)
 	swap(users.Users_Git_Flow, random1, counter)
 	counter--
 
-	random2 := rand.Intn(counter)
+	seed2 := rand.NewSource(time.Now().UnixNano() + 30)
+	rand2 := rand.New(seed2)
+	random2 := rand2.Intn(counter)
 	rev2 = fmt.Sprint(users.Users_Git_Flow[random2].FlowdockName)
 
 	return
