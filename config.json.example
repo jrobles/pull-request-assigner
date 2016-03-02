@@ -1,0 +1,9 @@
+{
+		    "fd_token": "yourflowdockapitoken",
+    		"users_git_flow": [
+        {
+            "github_name": "josemrobles",
+            "flowdock_name": "Jose.Robles"
+        }
+    ]
+}

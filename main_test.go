@@ -1,6 +1,24 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+)
+
+var (
+	server  *httptest.Server
+	reader  io.Reader //Ignore this for now
+	testUrl string
+)
+
+func init() {
+	server = httptest.NewServer(http.HandlerFunc(indexAction)) //Creating new server with the user handlers
+	testUrl = fmt.Sprintf("%s/", server.URL)                   //Grab the address for the API endpoint
+}
 
 func TestSwap(t *testing.T) {
 	u0 := UsersGitFlow{GithubName: "Eric0", FlowdockName: "eric test0"}
@@ -53,7 +71,7 @@ func TestSelectReviewers(t *testing.T) {
 		u11,
 		u12,
 	}
-	users := UsersData{
+	users := JSONConfigData{
 		Users_Git_Flow: temp,
 	}
 	prOwner := "User0"
@@ -72,17 +90,21 @@ func TestSelectReviewers(t *testing.T) {
 	}
 }
 
-func TestGetUsers(t *testing.T) {
-	user1 := &UsersGitFlow{}
-	user1.FlowdockName = "User1Flowdock"
-	user1.GithubName = "User1Github"
+func TestIndexAction(t *testing.T) {
+	testJson := `{"action": "opened","number": 280,"pull_request": {"html_url": "https://github.com/orgname/repo/pull/280","user": {"login": "josemrobles"}}}`
 
-	users := getUsers("users.json")
+	reader := strings.NewReader(testJson) //Convert string to reader
 
-	u := append(users.Users_Git_Flow, *user1)
-	count_elements := len(u)
-	last_user := u[count_elements-1]
-	if last_user.GithubName != "User1Github" {
-		t.Fatal("Reading users from json has failed")
+	request, err := http.NewRequest("POST", testUrl, reader) //Create request with JSON body
+	request.Header.Set("Token", "37f7f7446d64345dd367744428837fe5")
+
+	res, err := http.DefaultClient.Do(request)
+
+	if err != nil {
+		t.Fatal(err) //Something is wrong while sending request
+	}
+
+	if res.StatusCode != 201 {
+		t.Fatal("Expected 201 status code, received: ", res.StatusCode) //Uh-oh this means our test failed
 	}
 }

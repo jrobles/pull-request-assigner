@@ -17,10 +17,7 @@ type gitPayload struct {
 }
 
 type JSONConfigData struct {
-	Fd_Token string `json:"fd_token"`
-}
-
-type UsersData struct {
+	Fd_Token       string         `json:"fd_token"`
 	Users_Git_Flow []UsersGitFlow `json:"users_git_flow"`
 }
 
