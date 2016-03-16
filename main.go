@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/josemrobles/robification-go"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
 )
@@ -14,7 +15,9 @@ func main() {
 	http.HandleFunc("/", indexAction)
 	err := http.ListenAndServe(":8008", nil)
 	if err != nil {
-		panic(err)
+		log.Printf("Could not start API %q", err)
+	} else {
+		log.Printf("Listening on port 8008")
 	}
 
 }
@@ -40,10 +43,10 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 			err = robification.Send(post)
 			if err != nil {
 				res.WriteHeader(500)
-				fmt.Fprintf(res, "ERROR: Could not send robification")
+				log.Printf("ERROR: Could not send robification")
 			}
 			res.WriteHeader(201)
-			fmt.Fprintf(res, "Robification sent")
+			log.Printf("Robification sent")
 		}
 	}
 
