@@ -46,7 +46,9 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 				log.Printf("ERROR: Could not send robification")
 			}
 			res.WriteHeader(201)
-			log.Printf("Robification sent")
+			log.Printf("Robification sent to %s and %s for %s repo",rev1,rev2,string(p.Pull_Request.Head.Repo.Name))
+		} else {
+			log.Printf("No robification for %s",string(p.Action))
 		}
 	}
 
