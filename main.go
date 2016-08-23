@@ -12,6 +12,8 @@ import (
 
 func main() {
 
+	githubAuth()
+
 	http.HandleFunc("/", indexAction)
 	err := http.ListenAndServe(":8008", nil)
 	if err != nil {
@@ -19,7 +21,6 @@ func main() {
 	} else {
 		log.Printf("Listening on port 8008")
 	}
-
 }
 
 func indexAction(res http.ResponseWriter, req *http.Request) {
@@ -46,9 +47,9 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 				log.Printf("ERROR: Could not send robification")
 			}
 			res.WriteHeader(201)
-			log.Printf("Robification sent to %s and %s for %s repo",rev1,rev2,string(p.Pull_Request.Head.Repo.Name))
+			log.Printf("*** Robification sent to %s and %s for %s repo ***", rev1, rev2, string(p.Pull_Request.Head.Repo.Name))
 		} else {
-			log.Printf("No robification for %s",string(p.Action))
+			log.Printf("No robification for %s", string(p.Action))
 		}
 	}
 
