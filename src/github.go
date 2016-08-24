@@ -7,10 +7,6 @@ import (
 	"time"
 )
 
-type Timestamp struct {
-	time.Time
-}
-
 type ApiResponse struct {
 	Action       string      `json:"action,omitempty"`
 	Number       int         `json:"number,omitempty"`
@@ -22,6 +18,10 @@ type PullRequest struct {
 	Head     struct {
 		Repo *Repository `json:"repo,omitempty"`
 	} `json:"head,omitempty"`
+	Base struct {
+		User *User       `json:"user,omitempty"`
+		Repo *Repository `json:"repo,omitempty"`
+	} `json:"base,omitempty"`
 	User *User `json:"user,omitempty"`
 }
 
@@ -43,14 +43,11 @@ type Issue struct {
 }
 
 type Repository struct {
-	ID        *int       `json:"id,omitempty"`
-	Owner     *User      `json:"owner,omitempty"`
-	Name      *string    `json:"name,omitempty"`
-	FullName  *string    `json:"full_name,omitempty"`
-	CreatedAt *Timestamp `json:"created_at,omitempty"`
-	PushedAt  *Timestamp `json:"pushed_at,omitempty"`
-	UpdatedAt *Timestamp `json:"updated_at,omitempty"`
-	HTMLURL   *string    `json:"html_url,omitempty"`
+	ID       *int    `json:"id,omitempty"`
+	User     *User   `json:"owner,omitempty"`
+	Name     *string `json:"name,omitempty"`
+	FullName *string `json:"full_name,omitempty"`
+	HTMLURL  *string `json:"html_url,omitempty"`
 }
 
 func githubAuth(configs *Config) {
@@ -66,4 +63,10 @@ func githubAuth(configs *Config) {
 		return
 	}
 	fmt.Printf("\n\nLogged in as: %v\n\n", string(*user.Login))
+}
+
+func assignToPullRequest(owner, repo string, number int, reviewer string) error {
+	fmt.Println(owner, repo, number, reviewer)
+
+	return nil
 }

@@ -11,14 +11,11 @@ type UserGitFlow struct {
 }
 
 type User struct {
-	Login       *string    `json:"login,omitempty"`
-	ID          *int       `json:"id,omitempty"`
-	AvatarURL   *string    `json:"avatar_url,omitempty"`
-	Name        *string    `json:"name,omitempty"`
-	CreatedAt   *Timestamp `json:"created_at,omitempty"`
-	UpdatedAt   *Timestamp `json:"updated_at,omitempty"`
-	SuspendedAt *Timestamp `json:"suspended_at,omitempty"`
-	Type        *string    `json:"type,omitempty"`
+	Login     *string `json:"login,omitempty"`
+	ID        *int    `json:"id,omitempty"`
+	AvatarURL *string `json:"avatar_url,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	Type      *string `json:"type,omitempty"`
 }
 
 func selectReviewers(prOwner string, users Config) (rev1, rev2 string) {
