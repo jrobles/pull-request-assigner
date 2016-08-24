@@ -1,13 +1,9 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"github.com/google/go-github/github"
-	"golang.org/x/crypto/ssh/terminal"
-	"os"
 	"strings"
-	"syscall"
 	"time"
 )
 
@@ -47,30 +43,20 @@ type Issue struct {
 }
 
 type Repository struct {
-	ID        *int        `json:"id,omitempty"`
-	Owner     *User       `json:"owner,omitempty"`
-	Name      *string     `json:"name,omitempty"`
-	FullName  *string     `json:"full_name,omitempty"`
-	CreatedAt *Timestamp  `json:"created_at,omitempty"`
-	PushedAt  *Timestamp  `json:"pushed_at,omitempty"`
-	UpdatedAt *Timestamp  `json:"updated_at,omitempty"`
-	HTMLURL   *string     `json:"html_url,omitempty"`
-	Source    *Repository `json:"source,omitempty"`
-	Private   *bool       `json:"private"`
+	ID        *int       `json:"id,omitempty"`
+	Owner     *User      `json:"owner,omitempty"`
+	Name      *string    `json:"name,omitempty"`
+	FullName  *string    `json:"full_name,omitempty"`
+	CreatedAt *Timestamp `json:"created_at,omitempty"`
+	PushedAt  *Timestamp `json:"pushed_at,omitempty"`
+	UpdatedAt *Timestamp `json:"updated_at,omitempty"`
+	HTMLURL   *string    `json:"html_url,omitempty"`
 }
 
-func githubAuth() {
-	r := bufio.NewReader(os.Stdin)
-	fmt.Print("GitHub Username: ")
-	username, _ := r.ReadString('\n')
-
-	fmt.Print("GitHub Password: ")
-	bytePassword, _ := terminal.ReadPassword(int(syscall.Stdin))
-	password := string(bytePassword)
-
+func githubAuth(configs *Config) {
 	tp := github.BasicAuthTransport{
-		Username: strings.TrimSpace(username),
-		Password: strings.TrimSpace(password),
+		Username: strings.TrimSpace(configs.Github_Login),
+		Password: strings.TrimSpace(configs.Github_Password),
 	}
 
 	client := github.NewClient(tp.Client())
@@ -80,25 +66,4 @@ func githubAuth() {
 		return
 	}
 	fmt.Printf("\n\nLogged in as: %v\n\n", string(*user.Login))
-}
-
-//func (s *IssuesService) assignToPr(owner, repo string, number int, assignees []string) error {
-func assignToPr(owner, repo string, number int, assignees []string) error {
-	/*
-			users := &struct {
-				Assignees []string `json:"assignees,omitempty"`
-			}{Assignees: assignees}
-			u := fmt.Sprintf("repos/%v/%v/issues/%v/assignees", owner, repo, number)
-			req, err := s.client.NewRequest("POST", u, users)
-			if err != nil {
-				return err
-			}
-
-			issue := &Issue{}
-			resp, err := s.client.Do(req, issue)
-
-			fmt.Println(issue, resp)
-		return err
-	*/
-	return nil
 }

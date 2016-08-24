@@ -5,17 +5,20 @@ import (
 	"io/ioutil"
 )
 
-type JSONConfigData struct {
-	Fd_Token       string         `json:"fd_token"`
-	Users_Git_Flow []UsersGitFlow `json:"users_git_flow"`
+type Config struct {
+	Fd_Token        string        `json:"fd_token"`
+	Github_Login    string        `json:"github_login"`
+	Github_Password string        `json:"github_password"`
+	Users_Git_Flow  []UserGitFlow `json:"users_git_flow"`
 }
 
-func getConfig(jsonFile string) (config *JSONConfigData) {
-	config = &JSONConfigData{}
-	J, err := ioutil.ReadFile(jsonFile)
+func getConfigs() (configs *Config) {
+
+	configs = &Config{}
+	J, err := ioutil.ReadFile("config.json")
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal([]byte(J), &config)
+	json.Unmarshal([]byte(J), &configs)
 	return
 }

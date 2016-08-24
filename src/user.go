@@ -5,9 +5,9 @@ import (
 	"math/rand"
 )
 
-type UsersGitFlow struct {
-	GithubName   string `json:"github_name"`
-	FlowdockName string `json:"flowdock_name"`
+type UserGitFlow struct {
+	GithubName   string `json:"github_name,omitempty"`
+	FlowdockName string `json:"flowdock_name,omitempty"`
 }
 
 type User struct {
@@ -21,7 +21,7 @@ type User struct {
 	Type        *string    `json:"type,omitempty"`
 }
 
-func selectReviewers(prOwner string, users JSONConfigData) (rev1, rev2 string) {
+func selectReviewers(prOwner string, users Config) (rev1, rev2 string) {
 	count_elements := len(users.Users_Git_Flow)
 	counter := count_elements - 1 //positions availables in the array of users
 	i := 0
@@ -50,7 +50,7 @@ func selectReviewers(prOwner string, users JSONConfigData) (rev1, rev2 string) {
 	return
 }
 
-func swap(users []UsersGitFlow, pos1, pos2 int) {
+func swap(users []UserGitFlow, pos1, pos2 int) {
 	temp := users[pos1]
 	users[pos1] = users[pos2]
 	users[pos2] = temp
