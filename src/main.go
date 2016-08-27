@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/josemrobles/robification-go"
 	"log"
@@ -9,11 +10,20 @@ import (
 )
 
 var (
-	configs = getConfigs()
-	ghAuth  = githubAuth(configs)
+	configs  = getConfigs()
+	ghAuth   = githubAuth(configs)
+	testMode = flag.Bool("test", false, "true = no notifications, false = notifications, defaults to false")
 )
 
+func init() {
+	flag.Parse()
+
+}
+
 func main() {
+	if *testMode == true {
+		log.Print("INFO: In test mode, messages WILL NOT be sent and reviewers WILL NOT be assigned")
+	}
 
 	http.HandleFunc("/", indexAction)
 	err := http.ListenAndServe(":8008", nil)
@@ -46,16 +56,21 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 
 			assignToPullRequest(org, repo, prID, "johnDoe") // owner, repo, number, reviewer
 
-			// Send robification
-			message := fmt.Sprint(prURL, " To: ", repo, " by: ", author, " review: ", "@", reviewerA, " @", reviewerB)
-			post := robification.NewFdChat(string(configs.Fd_Token), string(message))
-			err = robification.Send(post)
-			if err != nil {
-				res.WriteHeader(500)
-				log.Printf("ERROR: Could not send robificationi: %v", err)
+			if *testMode == false {
+				// Send robification
+				message := fmt.Sprint(prURL, " To: ", repo, " by: ", author, " review: ", "@", reviewerA, " @", reviewerB)
+				post := robification.NewFdChat(string(configs.Fd_Token), string(message))
+				err = robification.Send(post)
+				if err != nil {
+					res.WriteHeader(500)
+					log.Printf("ERROR: Could not send robificationi: %v", err)
+				} else {
+					res.WriteHeader(201)
+					log.Printf("INFO: Robification sent to %s and %s for %s repo", reviewerA, reviewerB, repo)
+				}
 			} else {
 				res.WriteHeader(201)
-				log.Printf("*** Robification sent to %s and %s for %s repo ***", reviewerA, reviewerB, repo)
+				log.Printf("SIMULATION: Robification sent to %s and %s for %s repo", reviewerA, reviewerB, repo)
 			}
 		} else {
 			log.Printf("No robification for %s event", string(p.Action))

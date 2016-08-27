@@ -62,7 +62,7 @@ func githubAuth(configs *Config) *github.Client {
 		log.Printf("error: %v", err)
 		return nil
 	} else {
-		log.Printf("Logged in as: %s", string(*user.Login))
+		log.Printf("INFO: Logged in as: %s", *user.Login)
 		return client
 	}
 }
