@@ -5,7 +5,6 @@ import (
 	"github.com/google/go-github/github"
 	"log"
 	"strings"
-	//"time"
 )
 
 type ApiResponse struct {
@@ -28,16 +27,13 @@ type PullRequest struct {
 
 // Issue represents a GitHub issue on a repository.
 type Issue struct {
-	ID       int    `json:"id,omitempty"`
-	Number   int    `json:"number,omitempty"`
-	State    string `json:"state,omitempty"`
-	Title    string `json:"title,omitempty"`
-	Body     string `json:"body,omitempty"`
-	User     User   `json:"user,omitempty"`
-	Assignee User   `json:"assignee,omitempty"`
-	//ClosedAt  time.Time `json:"closed_at,omitempty"`
-	//CreatedAt time.Time `json:"created_at,omitempty"`
-	//UpdatedAt time.Time `json:"updated_at,omitempty"`
+	ID        int     `json:"id,omitempty"`
+	Number    int     `json:"number,omitempty"`
+	State     string  `json:"state,omitempty"`
+	Title     string  `json:"title,omitempty"`
+	Body      string  `json:"body,omitempty"`
+	User      User    `json:"user,omitempty"`
+	Assignee  User    `json:"assignee,omitempty"`
 	URL       string  `json:"url,omitempty"`
 	HTMLURL   string  `json:"html_url,omitempty"`
 	Assignees []*User `json:"assignees,omitempty"`

@@ -25,7 +25,7 @@ func main() {
 		log.Print("INFO: In test mode, messages WILL NOT be sent and reviewers WILL NOT be assigned")
 	}
 
-	http.HandleFunc("/", indexAction)
+	http.HandleFunc("/v1/pulls/", processPullRequest)
 	err := http.ListenAndServe(":8008", nil)
 	if err != nil {
 		log.Printf("Could not start API %q", err)
@@ -34,7 +34,7 @@ func main() {
 	}
 }
 
-func indexAction(res http.ResponseWriter, req *http.Request) {
+func processPullRequest(res http.ResponseWriter, req *http.Request) {
 
 	decoder := json.NewDecoder(req.Body)
 	var p ApiResponse
@@ -57,8 +57,8 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 			if *testMode == false {
 
 				// Assign the PR to each reviewer
-				assignToPullRequest(org, repo, prNumber, reviewerA.Github) // owner, repo, number, reviewer
-				assignToPullRequest(org, repo, prNumber, reviewerB.Github) // owner, repo, number, reviewer
+				assignToPullRequest(org, repo, prNumber, reviewerA.Github)
+				assignToPullRequest(org, repo, prNumber, reviewerB.Github)
 
 				// Send robification
 				message := fmt.Sprint(prURL, " To: ", repo, " by: ", author, " review: ", "@", reviewerA.Flowdock, " @", reviewerB.Flowdock)
@@ -73,11 +73,12 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 				}
 			} else {
 				res.WriteHeader(201)
-				assignToPullRequest(org, repo, prNumber, "josemrobles")
 				log.Printf("SIMULATION: Robification sent to %s and %s for %s repo", reviewerA.Flowdock, reviewerB.Flowdock, repo)
+				log.Printf("SIMULATION: PR %v has been assigned to %s on GitHub", prNumber, reviewerA.Github)
+				log.Printf("SIMULATION: PR %v has been assigned to %s on GitHub", prNumber, reviewerB.Github)
 			}
 		} else {
-			log.Printf("No robification for %s event", string(p.Action))
+			log.Printf("INFO: No robification for %s event", string(p.Action))
 		}
 	}
 }
