@@ -54,11 +54,14 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 			repo := p.Pull_Request.Head.Repo.Name
 			reviewerA, reviewerB := selectReviewers(author, *configs)
 
-			assignToPullRequest(org, repo, prID, "johnDoe") // owner, repo, number, reviewer
-
 			if *testMode == false {
+
+				// Assign the PR to each reviewer
+				assignToPullRequest(org, repo, prID, reviewerA.Github) // owner, repo, number, reviewer
+				assignToPullRequest(org, repo, prID, reviewerB.Github) // owner, repo, number, reviewer
+
 				// Send robification
-				message := fmt.Sprint(prURL, " To: ", repo, " by: ", author, " review: ", "@", reviewerA, " @", reviewerB)
+				message := fmt.Sprint(prURL, " To: ", repo, " by: ", author, " review: ", "@", reviewerA.Flowdock, " @", reviewerB.Flowdock)
 				post := robification.NewFdChat(string(configs.Fd_Token), string(message))
 				err = robification.Send(post)
 				if err != nil {
@@ -66,11 +69,13 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 					log.Printf("ERROR: Could not send robificationi: %v", err)
 				} else {
 					res.WriteHeader(201)
-					log.Printf("INFO: Robification sent to %s and %s for %s repo", reviewerA, reviewerB, repo)
+					log.Printf("INFO: Robification sent to %s and %s for %s repo", reviewerA.Flowdock, reviewerB.Flowdock, repo)
 				}
 			} else {
 				res.WriteHeader(201)
-				log.Printf("SIMULATION: Robification sent to %s and %s for %s repo", reviewerA, reviewerB, repo)
+				log.Printf("SIMULATION: Robification sent to %s and %s for %s repo", reviewerA.Flowdock, reviewerB.Flowdock, repo)
+				log.Printf("SIMULATION: Assigning issue %v to %s on GitHub", prID, reviewerA.Github)
+				log.Printf("SIMULATION: Assigning issue %v to %s on GitHub", prID, reviewerB.Github)
 			}
 		} else {
 			log.Printf("No robification for %s event", string(p.Action))

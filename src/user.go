@@ -6,8 +6,8 @@ import (
 )
 
 type Reviewer struct {
-	GithubName   string `json:"github_name,omitempty"`
-	FlowdockName string `json:"flowdock_name,omitempty"`
+	Github   string `json:"github_name,omitempty"`
+	Flowdock string `json:"flowdock_name,omitempty"`
 }
 
 type User struct {
@@ -18,7 +18,7 @@ type User struct {
 	Type      string `json:"type,omitempty"`
 }
 
-func selectReviewers(prOwner string, users Config) (rev1, rev2 string) {
+func selectReviewers(prOwner string, users Config) (rev1, rev2 Reviewer) {
 	count_elements := len(users.Users_Git_Flow)
 	counter := count_elements - 1 //positions availables in the array of users
 	i := 0
@@ -26,7 +26,7 @@ func selectReviewers(prOwner string, users Config) (rev1, rev2 string) {
 	//The positions are going to change in the array to be sure each selected user is different
 	//to the other and both of them are different from the PullRequest creator
 	for i < count_elements {
-		if owner := fmt.Sprint(users.Users_Git_Flow[i].GithubName); owner == prOwner {
+		if owner := fmt.Sprint(users.Users_Git_Flow[i].Github); owner == prOwner {
 			break
 		}
 		i++
@@ -37,12 +37,12 @@ func selectReviewers(prOwner string, users Config) (rev1, rev2 string) {
 		counter--
 	}
 	random1 := rand.Intn(counter)
-	rev1 = string(users.Users_Git_Flow[random1].FlowdockName)
+	rev1 = users.Users_Git_Flow[random1]
 	swap(users.Users_Git_Flow, random1, counter)
 	counter--
 
 	random2 := rand.Intn(counter)
-	rev2 = string(users.Users_Git_Flow[random2].FlowdockName)
+	rev2 = users.Users_Git_Flow[random2]
 
 	return
 }
