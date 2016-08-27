@@ -1,10 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/google/go-github/github"
 	"log"
 	"strings"
-	"time"
+	//"time"
 )
 
 type ApiResponse struct {
@@ -27,19 +28,19 @@ type PullRequest struct {
 
 // Issue represents a GitHub issue on a repository.
 type Issue struct {
-	ID        int       `json:"id,omitempty"`
-	Number    int       `json:"number,omitempty"`
-	State     string    `json:"state,omitempty"`
-	Title     string    `json:"title,omitempty"`
-	Body      string    `json:"body,omitempty"`
-	User      User      `json:"user,omitempty"`
-	Assignee  User      `json:"assignee,omitempty"`
-	ClosedAt  time.Time `json:"closed_at,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	URL       string    `json:"url,omitempty"`
-	HTMLURL   string    `json:"html_url,omitempty"`
-	Assignees []*User   `json:"assignees,omitempty"`
+	ID       int    `json:"id,omitempty"`
+	Number   int    `json:"number,omitempty"`
+	State    string `json:"state,omitempty"`
+	Title    string `json:"title,omitempty"`
+	Body     string `json:"body,omitempty"`
+	User     User   `json:"user,omitempty"`
+	Assignee User   `json:"assignee,omitempty"`
+	//ClosedAt  time.Time `json:"closed_at,omitempty"`
+	//CreatedAt time.Time `json:"created_at,omitempty"`
+	//UpdatedAt time.Time `json:"updated_at,omitempty"`
+	URL       string  `json:"url,omitempty"`
+	HTMLURL   string  `json:"html_url,omitempty"`
+	Assignees []*User `json:"assignees,omitempty"`
 }
 
 type Repository struct {
@@ -68,7 +69,28 @@ func githubAuth(configs *Config) *github.Client {
 }
 
 func assignToPullRequest(owner, repo string, number int, reviewer string) error {
-	log.Print(owner, repo, number, reviewer)
 
+	assignees := make([]string, 1)
+	assignees[0] = reviewer
+
+	users := &struct {
+		Assignees []string `json:"assignees,omitempty"`
+	}{Assignees: assignees}
+
+	u := fmt.Sprintf("repos/%v/%v/issues/%v/assignees", owner, repo, number)
+	req, err := ghAuth.NewRequest("POST", u, users)
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+
+	issue := &Issue{}
+	_, err = ghAuth.Do(req, issue)
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+	log.Printf("INFO: PR %v has been assigned to %s on GitHub", number, reviewer)
 	return nil
+
 }

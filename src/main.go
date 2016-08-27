@@ -49,7 +49,7 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 		if p.Action == "opened" {
 			author := p.Pull_Request.User.Login
 			prURL := p.Pull_Request.Html_Url
-			prID := p.Pull_Request.Base.Repo.ID
+			prNumber := p.Number
 			org := p.Pull_Request.Base.Repo.User.Login
 			repo := p.Pull_Request.Head.Repo.Name
 			reviewerA, reviewerB := selectReviewers(author, *configs)
@@ -57,8 +57,8 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 			if *testMode == false {
 
 				// Assign the PR to each reviewer
-				assignToPullRequest(org, repo, prID, reviewerA.Github) // owner, repo, number, reviewer
-				assignToPullRequest(org, repo, prID, reviewerB.Github) // owner, repo, number, reviewer
+				assignToPullRequest(org, repo, prNumber, reviewerA.Github) // owner, repo, number, reviewer
+				assignToPullRequest(org, repo, prNumber, reviewerB.Github) // owner, repo, number, reviewer
 
 				// Send robification
 				message := fmt.Sprint(prURL, " To: ", repo, " by: ", author, " review: ", "@", reviewerA.Flowdock, " @", reviewerB.Flowdock)
@@ -73,9 +73,8 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 				}
 			} else {
 				res.WriteHeader(201)
+				assignToPullRequest(org, repo, prNumber, "josemrobles")
 				log.Printf("SIMULATION: Robification sent to %s and %s for %s repo", reviewerA.Flowdock, reviewerB.Flowdock, repo)
-				log.Printf("SIMULATION: Assigning issue %v to %s on GitHub", prID, reviewerA.Github)
-				log.Printf("SIMULATION: Assigning issue %v to %s on GitHub", prID, reviewerB.Github)
 			}
 		} else {
 			log.Printf("No robification for %s event", string(p.Action))
