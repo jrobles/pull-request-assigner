@@ -10,18 +10,17 @@ import (
 
 var (
 	configs = getConfigs()
+	ghAuth  = githubAuth(configs)
 )
 
 func main() {
-
-	githubAuth(configs)
 
 	http.HandleFunc("/", indexAction)
 	err := http.ListenAndServe(":8008", nil)
 	if err != nil {
 		log.Printf("Could not start API %q", err)
 	} else {
-		log.Printf("Listening on port 8008")
+		log.Print("Listening on port 8008")
 	}
 }
 
@@ -38,13 +37,14 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(res, string(b))
 	} else {
 		if p.Action == "opened" {
-			author := p.Pull_Request.User.Login
+			author := string(p.Pull_Request.User.Login)
 			prUrl := p.Pull_Request.Html_Url
-			org := string(*p.Pull_Request.Base.Repo.User.Login)
-			repo := string(*p.Pull_Request.Head.Repo.Name)
-			reviewerA, reviewerB := selectReviewers(*author, *configs)
+			org := string(p.Pull_Request.Base.Repo.User.Login)
+			repo := string(p.Pull_Request.Head.Repo.Name)
+			reviewerA, reviewerB := selectReviewers(author, *configs)
 
 			assignToPullRequest(org, repo, 1234, "johnDoe") // owner, repo, number, reviewer
+			log.Print(prUrl)
 
 			// Send robification
 			message := fmt.Sprint(prUrl, " To: ", repo, " by: ", author, " review: ", "@", reviewerA, " @", reviewerB)

@@ -11,11 +11,11 @@ type UserGitFlow struct {
 }
 
 type User struct {
-	Login     *string `json:"login,omitempty"`
-	ID        *int    `json:"id,omitempty"`
-	AvatarURL *string `json:"avatar_url,omitempty"`
-	Name      *string `json:"name,omitempty"`
-	Type      *string `json:"type,omitempty"`
+	Login     string `json:"login,omitempty"`
+	ID        int    `json:"id,omitempty"`
+	AvatarURL string `json:"avatar_url,omitempty"`
+	Name      string `json:"name,omitempty"`
+	Type      string `json:"type,omitempty"`
 }
 
 func selectReviewers(prOwner string, users Config) (rev1, rev2 string) {
@@ -37,12 +37,12 @@ func selectReviewers(prOwner string, users Config) (rev1, rev2 string) {
 		counter--
 	}
 	random1 := rand.Intn(counter)
-	rev1 = fmt.Sprint(users.Users_Git_Flow[random1].FlowdockName)
+	rev1 = string(users.Users_Git_Flow[random1].FlowdockName)
 	swap(users.Users_Git_Flow, random1, counter)
 	counter--
 
 	random2 := rand.Intn(counter)
-	rev2 = fmt.Sprint(users.Users_Git_Flow[random2].FlowdockName)
+	rev2 = string(users.Users_Git_Flow[random2].FlowdockName)
 
 	return
 }

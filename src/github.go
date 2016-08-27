@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/google/go-github/github"
+	"log"
 	"strings"
 	"time"
 )
@@ -27,30 +27,30 @@ type PullRequest struct {
 
 // Issue represents a GitHub issue on a repository.
 type Issue struct {
-	ID        *int       `json:"id,omitempty"`
-	Number    *int       `json:"number,omitempty"`
-	State     *string    `json:"state,omitempty"`
-	Title     *string    `json:"title,omitempty"`
-	Body      *string    `json:"body,omitempty"`
-	User      *User      `json:"user,omitempty"`
-	Assignee  *User      `json:"assignee,omitempty"`
-	ClosedAt  *time.Time `json:"closed_at,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	URL       *string    `json:"url,omitempty"`
-	HTMLURL   *string    `json:"html_url,omitempty"`
-	Assignees []*User    `json:"assignees,omitempty"`
+	ID        int       `json:"id,omitempty"`
+	Number    int       `json:"number,omitempty"`
+	State     string    `json:"state,omitempty"`
+	Title     string    `json:"title,omitempty"`
+	Body      string    `json:"body,omitempty"`
+	User      User      `json:"user,omitempty"`
+	Assignee  User      `json:"assignee,omitempty"`
+	ClosedAt  time.Time `json:"closed_at,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	URL       string    `json:"url,omitempty"`
+	HTMLURL   string    `json:"html_url,omitempty"`
+	Assignees []*User   `json:"assignees,omitempty"`
 }
 
 type Repository struct {
-	ID       *int    `json:"id,omitempty"`
-	User     *User   `json:"owner,omitempty"`
-	Name     *string `json:"name,omitempty"`
-	FullName *string `json:"full_name,omitempty"`
-	HTMLURL  *string `json:"html_url,omitempty"`
+	ID       int    `json:"id,omitempty"`
+	User     User   `json:"owner,omitempty"`
+	Name     string `json:"name,omitempty"`
+	FullName string `json:"full_name,omitempty"`
+	HTMLURL  string `json:"html_url,omitempty"`
 }
 
-func githubAuth(configs *Config) {
+func githubAuth(configs *Config) *github.Client {
 	tp := github.BasicAuthTransport{
 		Username: strings.TrimSpace(configs.Github_Login),
 		Password: strings.TrimSpace(configs.Github_Password),
@@ -59,14 +59,16 @@ func githubAuth(configs *Config) {
 	client := github.NewClient(tp.Client())
 	user, _, err := client.Users.Get("")
 	if err != nil {
-		fmt.Printf("\nerror: %v\n", err)
-		return
+		log.Printf("error: %v", err)
+		return nil
+	} else {
+		log.Printf("Logged in as: %s", string(*user.Login))
+		return client
 	}
-	fmt.Printf("\n\nLogged in as: %v\n\n", string(*user.Login))
 }
 
 func assignToPullRequest(owner, repo string, number int, reviewer string) error {
-	fmt.Println(owner, repo, number, reviewer)
+	log.Print(owner, repo, number, reviewer)
 
 	return nil
 }
