@@ -37,26 +37,26 @@ func indexAction(res http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(res, string(b))
 	} else {
 		if p.Action == "opened" {
-			author := string(p.Pull_Request.User.Login)
-			prUrl := p.Pull_Request.Html_Url
-			org := string(p.Pull_Request.Base.Repo.User.Login)
-			repo := string(p.Pull_Request.Head.Repo.Name)
+			author := p.Pull_Request.User.Login
+			prURL := p.Pull_Request.Html_Url
+			prID := p.Pull_Request.Base.Repo.ID
+			org := p.Pull_Request.Base.Repo.User.Login
+			repo := p.Pull_Request.Head.Repo.Name
 			reviewerA, reviewerB := selectReviewers(author, *configs)
 
-			assignToPullRequest(org, repo, 1234, "johnDoe") // owner, repo, number, reviewer
-			log.Print(prUrl)
+			assignToPullRequest(org, repo, prID, "johnDoe") // owner, repo, number, reviewer
 
 			// Send robification
-			message := fmt.Sprint(prUrl, " To: ", repo, " by: ", author, " review: ", "@", reviewerA, " @", reviewerB)
+			message := fmt.Sprint(prURL, " To: ", repo, " by: ", author, " review: ", "@", reviewerA, " @", reviewerB)
 			post := robification.NewFdChat(string(configs.Fd_Token), string(message))
 			err = robification.Send(post)
 			if err != nil {
 				res.WriteHeader(500)
-				log.Printf("ERROR: Could not send robification")
+				log.Printf("ERROR: Could not send robificationi: %v", err)
+			} else {
+				res.WriteHeader(201)
+				log.Printf("*** Robification sent to %s and %s for %s repo ***", reviewerA, reviewerB, repo)
 			}
-
-			res.WriteHeader(201)
-			log.Printf("*** Robification sent to %s and %s for %s repo ***", reviewerA, reviewerB, repo)
 		} else {
 			log.Printf("No robification for %s event", string(p.Action))
 		}
