@@ -5,7 +5,7 @@ import (
 	"math/rand"
 )
 
-type UserGitFlow struct {
+type Reviewer struct {
 	GithubName   string `json:"github_name,omitempty"`
 	FlowdockName string `json:"flowdock_name,omitempty"`
 }
@@ -47,7 +47,7 @@ func selectReviewers(prOwner string, users Config) (rev1, rev2 string) {
 	return
 }
 
-func swap(users []UserGitFlow, pos1, pos2 int) {
+func swap(users []Reviewer, pos1, pos2 int) {
 	temp := users[pos1]
 	users[pos1] = users[pos2]
 	users[pos2] = temp

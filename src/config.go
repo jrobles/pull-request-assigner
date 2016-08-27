@@ -6,10 +6,10 @@ import (
 )
 
 type Config struct {
-	Fd_Token        string        `json:"fd_token"`
-	Github_Login    string        `json:"github_login"`
-	Github_Password string        `json:"github_password"`
-	Users_Git_Flow  []UserGitFlow `json:"users_git_flow"`
+	Fd_Token        string     `json:"fd_token"`
+	Github_Login    string     `json:"github_login"`
+	Github_Password string     `json:"github_password"`
+	Users_Git_Flow  []Reviewer `json:"users_git_flow"`
 }
 
 func getConfigs() (configs *Config) {
