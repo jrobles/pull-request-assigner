@@ -26,12 +26,20 @@ func main() {
 	}
 
 	http.HandleFunc("/v1/pulls/", processPullRequest)
+	http.HandleFunc("/v1/ping/", ping)
 	err := http.ListenAndServe(":8008", nil)
 	if err != nil {
 		log.Printf("Could not start API %q", err)
 	} else {
 		log.Print("Listening on port 8008")
 	}
+}
+
+func ping(res http.ResponseWriter, req *http.Request) {
+	res.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(res, "pong")
+	log.Print("INFO: Pinged")
+	res.WriteHeader(200)
 }
 
 func processPullRequest(res http.ResponseWriter, req *http.Request) {
