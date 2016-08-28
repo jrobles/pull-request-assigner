@@ -12,10 +12,9 @@ type Config struct {
 	Users_Git_Flow  []Reviewer `json:"users_git_flow"`
 }
 
-func getConfigs() (configs *Config) {
-
+func getConfigs(configFile string) (configs *Config) {
 	configs = &Config{}
-	J, err := ioutil.ReadFile("config.json")
+	J, err := ioutil.ReadFile(configFile)
 	if err != nil {
 		panic(err)
 	}

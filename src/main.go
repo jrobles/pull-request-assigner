@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	configs  = getConfigs()
+	configs  = getConfigs("config.json")
 	ghAuth   = githubAuth(configs)
 	testMode = flag.Bool("test", false, "true = no notifications, false = notifications, defaults to false")
 )
@@ -36,10 +36,10 @@ func main() {
 }
 
 func ping(res http.ResponseWriter, req *http.Request) {
+	res.WriteHeader(201)
 	res.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(res, "pong")
 	log.Print("INFO: Pinged")
-	res.WriteHeader(200)
 }
 
 func processPullRequest(res http.ResponseWriter, req *http.Request) {
@@ -86,6 +86,7 @@ func processPullRequest(res http.ResponseWriter, req *http.Request) {
 				log.Printf("SIMULATION: PR %v has been assigned to %s on GitHub", prNumber, reviewerB.Github)
 			}
 		} else {
+			res.WriteHeader(201)
 			log.Printf("INFO: No robification for %s event", string(p.Action))
 		}
 	}
